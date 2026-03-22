@@ -32,6 +32,7 @@ interface UserProfile {
   role: string
   university: string
   avatarUrl: string
+  bannerColor: string
   graduationYear: number | null
   createdAt: string
   _count: { reviews: number; bracketVotes: number }
@@ -98,6 +99,7 @@ export default function ProfilePage() {
   const [editUniversity, setEditUniversity] = useState('')
   const [editAvatarUrl, setEditAvatarUrl] = useState('')
   const [editGradYear, setEditGradYear] = useState<string>('')
+  const [editBannerColor, setEditBannerColor] = useState('')
   const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
@@ -159,6 +161,7 @@ export default function ProfilePage() {
           role: editRole,
           university: editUniversity,
           avatarUrl: editAvatarUrl,
+          bannerColor: editBannerColor,
           graduationYear: editGradYear ? parseInt(editGradYear) : null,
         }),
       })
@@ -216,6 +219,7 @@ export default function ProfilePage() {
       setEditRole(profile.role)
       setEditUniversity(profile.university || selectedUniversity?.name || '')
       setEditAvatarUrl(profile.avatarUrl)
+      setEditBannerColor(profile.bannerColor || '')
       setEditGradYear(profile.graduationYear ? String(profile.graduationYear) : '')
     }
     setEditing(true)
@@ -291,7 +295,10 @@ export default function ProfilePage() {
           {/* Profile Card */}
           <div className="bg-white rounded-2xl shadow-md border border-silver-200 overflow-hidden">
             {/* Banner */}
-            <div className="h-32 bg-gradient-to-r from-navy-800 to-navy-600 relative">
+            <div
+              className={`h-32 relative ${profile.bannerColor ? '' : 'bg-gradient-to-r from-navy-800 to-navy-600'}`}
+              style={profile.bannerColor ? { background: profile.bannerColor } : undefined}
+            >
               <div className="absolute -bottom-12 left-6">
                 {profile.avatarUrl ? (
                   <div className="relative w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
@@ -580,6 +587,53 @@ export default function ProfilePage() {
                     />
                     <p className="text-xs text-gray-400">Upload a file or paste an image URL. Max 5MB for uploads.</p>
                   </div>
+                </div>
+              </div>
+
+              {/* Banner Color */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Banner Color</label>
+                <div
+                  className={`h-16 rounded-lg mb-3 border border-gray-200 ${editBannerColor ? '' : 'bg-gradient-to-r from-navy-800 to-navy-600'}`}
+                  style={editBannerColor ? { background: editBannerColor } : undefined}
+                />
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {[
+                    { label: 'Default', value: '' },
+                    { label: 'Ocean', value: 'linear-gradient(135deg, #0077b6, #00b4d8)' },
+                    { label: 'Sunset', value: 'linear-gradient(135deg, #f97316, #ec4899)' },
+                    { label: 'Forest', value: 'linear-gradient(135deg, #059669, #34d399)' },
+                    { label: 'Berry', value: 'linear-gradient(135deg, #7c3aed, #c084fc)' },
+                    { label: 'Midnight', value: 'linear-gradient(135deg, #1e293b, #475569)' },
+                    { label: 'Rose', value: 'linear-gradient(135deg, #e11d48, #fb7185)' },
+                    { label: 'Golden', value: 'linear-gradient(135deg, #b45309, #fbbf24)' },
+                  ].map((preset) => (
+                    <button
+                      key={preset.label}
+                      type="button"
+                      onClick={() => setEditBannerColor(preset.value)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                        editBannerColor === preset.value
+                          ? 'border-gold-500 ring-2 ring-gold-300 bg-gold-50 text-navy-800'
+                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`w-3.5 h-3.5 rounded-full flex-shrink-0 ${preset.value === '' ? 'bg-gradient-to-r from-navy-800 to-navy-600' : ''}`}
+                        style={preset.value ? { background: preset.value } : undefined}
+                      />
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs text-gray-500">Custom color:</label>
+                  <input
+                    type="color"
+                    value={editBannerColor.startsWith('#') ? editBannerColor : '#1e3a5f'}
+                    onChange={(e) => setEditBannerColor(e.target.value)}
+                    className="w-8 h-8 rounded cursor-pointer border border-gray-300"
+                  />
                 </div>
               </div>
 

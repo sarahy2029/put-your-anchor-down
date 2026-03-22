@@ -19,6 +19,7 @@ model User {
   role         String        @default("STUDENT") // STUDENT, FACULTY, STAFF, ALUMNI, OTHER
   university   String        @default("")
   avatarUrl    String        @default("")
+  bannerColor  String        @default("")
   graduationYear Int?
   createdAt    DateTime      @default(now())
   reviews      Review[]

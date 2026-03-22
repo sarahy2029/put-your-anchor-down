@@ -20,6 +20,7 @@ export async function GET() {
         role: true,
         university: true,
         avatarUrl: true,
+        bannerColor: true,
         graduationYear: true,
         createdAt: true,
         _count: { select: { reviews: true, bracketVotes: true } },
@@ -69,7 +70,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, bio, role, university, avatarUrl, graduationYear } = body
+    const { name, bio, role, university, avatarUrl, bannerColor, graduationYear } = body
 
     const validRoles = ['STUDENT', 'FACULTY', 'STAFF', 'ALUMNI', 'OTHER']
     const data: Record<string, unknown> = {}
@@ -89,6 +90,9 @@ export async function PATCH(request: NextRequest) {
     if (typeof avatarUrl === 'string') {
       data.avatarUrl = avatarUrl.trim()
     }
+    if (typeof bannerColor === 'string') {
+      data.bannerColor = bannerColor.trim()
+    }
     if (graduationYear === null || (typeof graduationYear === 'number' && graduationYear >= 2000 && graduationYear <= 2040)) {
       data.graduationYear = graduationYear
     }
@@ -104,6 +108,7 @@ export async function PATCH(request: NextRequest) {
         role: true,
         university: true,
         avatarUrl: true,
+        bannerColor: true,
         graduationYear: true,
         createdAt: true,
         _count: { select: { reviews: true, bracketVotes: true } },

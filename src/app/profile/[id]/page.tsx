@@ -64,6 +64,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       role: true,
       university: true,
       avatarUrl: true,
+      bannerColor: true,
       graduationYear: true,
       createdAt: true,
       _count: { select: { reviews: true, bracketVotes: true } },
@@ -192,7 +193,10 @@ export default async function PublicProfilePage({ params }: PageProps) {
       <div className="space-y-6">
         {/* Profile Card */}
         <div className="bg-white rounded-2xl shadow-md border border-silver-200 overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-navy-800 to-navy-600 relative">
+          <div
+            className={`h-32 relative ${user.bannerColor ? '' : 'bg-gradient-to-r from-navy-800 to-navy-600'}`}
+            style={user.bannerColor ? { background: user.bannerColor } : undefined}
+          >
             <div className="absolute -bottom-12 left-6">
               {user.avatarUrl ? (
                 <div className="relative w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
