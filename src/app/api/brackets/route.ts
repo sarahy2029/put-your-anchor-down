@@ -82,13 +82,49 @@ async function createBracket(university: string, month: number, year: number, un
     locations = candidates
       .filter(l => l.latitude && l.longitude && distanceKm(uniLat, uniLng, l.latitude!, l.longitude!) <= NEARBY_RADIUS_KM)
       .slice(0, 16)
+
+    // If geo search found nothing, also try university name match
+    if (locations.length < 2) {
+      const byName = await prisma.location.findMany({
+        where: {
+          OR: [
+            { university },
+            { university: { contains: university, mode: 'insensitive' as const } },
+          ],
+        },
+        orderBy: [{ avgRating: 'desc' }, { reviewCount: 'desc' }],
+        take: 16,
+      })
+      // Merge, avoiding duplicates
+      const existingIds = new Set(locations.map(l => l.id))
+      for (const loc of byName) {
+        if (!existingIds.has(loc.id)) {
+          locations.push(loc)
+          if (locations.length >= 16) break
+        }
+      }
+    }
   } else {
-    // Fallback: exact university name match
-    locations = await prisma.location.findMany({
-      where: { university },
-      orderBy: [{ avgRating: 'desc' }, { reviewCount: 'desc' }],
-      take: 16,
-    })
+    // Fallback: case-insensitive university name match
+    const exactCount = await prisma.location.count({ where: { university } })
+    if (exactCount > 0) {
+      locations = await prisma.location.findMany({
+        where: { university },
+        orderBy: [{ avgRating: 'desc' }, { reviewCount: 'desc' }],
+        take: 16,
+      })
+    } else {
+      locations = await prisma.location.findMany({
+        where: {
+          OR: [
+            { university: { contains: university, mode: 'insensitive' as const } },
+            { university: { startsWith: university.split(',')[0].trim(), mode: 'insensitive' as const } },
+          ],
+        },
+        orderBy: [{ avgRating: 'desc' }, { reviewCount: 'desc' }],
+        take: 16,
+      })
+    }
   }
 
   if (locations.length < 2) return null
