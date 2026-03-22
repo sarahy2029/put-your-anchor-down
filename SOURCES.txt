@@ -1,0 +1,126 @@
+PUT YOUR ANCHOR DOWN — Technologies, APIs, and Sources
+========================================================
+
+FRAMEWORKS & LANGUAGES
+-----------------------
+- Next.js 14.2 (React framework with App Router, server-side rendering)
+- React 18 (UI library)
+- TypeScript 5 (typed JavaScript)
+- Tailwind CSS 3 (utility-first CSS framework)
+- PostCSS / Autoprefixer (CSS processing)
+
+DATABASE & ORM
+--------------
+- Neon (serverless PostgreSQL database — https://neon.tech)
+- Prisma ORM 5.7 (database toolkit, schema management, migrations)
+- PostgreSQL (relational database engine, hosted on Neon)
+
+AUTHENTICATION
+--------------
+- NextAuth.js 4.24 (authentication library for Next.js)
+  - CredentialsProvider (email/password login with .edu validation)
+  - JWT strategy (JSON Web Tokens for session management)
+- bcryptjs (password hashing)
+
+DEPLOYMENT & HOSTING
+--------------------
+- Vercel (serverless hosting and deployment platform)
+- Vercel Blob Storage (@vercel/blob — cloud file/image storage)
+
+MAPS & GEOLOCATION
+-------------------
+- Leaflet 1.9 (open-source interactive map library)
+- react-leaflet 4.2 (React bindings for Leaflet)
+- OpenStreetMap (map tile provider — https://tile.openstreetmap.org)
+  - License: Open Data Commons Open Database License (ODbL)
+  - Attribution: © OpenStreetMap contributors
+
+API CALLS (External)
+---------------------
+1. OpenStreetMap Nominatim API (https://nominatim.openstreetmap.org)
+   - Used for: Address autocomplete/search when creating posts
+   - Endpoint: /search?q={query}&format=json&limit=6&addressdetails=1
+   - Used for: Geocoding addresses to lat/lng coordinates
+   - Used for: University location search
+   - License: ODbL, free to use with attribution
+   - No API key required
+
+2. Unsplash (https://images.unsplash.com)
+   - Used for: Default placeholder images for locations when no photo is uploaded
+   - Categories: Campus spots, restaurants, attractions
+   - License: Unsplash License (free for commercial and non-commercial use)
+
+API ROUTES (Internal — built by us)
+-------------------------------------
+1.  POST /api/register — User registration with .edu email validation
+2.  POST /api/auth/[...nextauth] — Sign in / sign out / session management
+3.  GET  /api/universities — List all universities in the database
+4.  GET  /api/universities/search — Search universities (DB + Nominatim)
+5.  GET  /api/locations — Fetch locations (filtered by university, category, search)
+6.  POST /api/locations — Create a new location/post
+7.  GET  /api/locations/[id] — Get single location details
+8.  PUT  /api/locations/[id] — Update a location
+9.  DELETE /api/locations/[id] — Delete a location
+10. GET  /api/reviews — Get reviews for a location
+11. POST /api/reviews — Create a review (with rating, vibes, wait time)
+12. PUT  /api/reviews — Edit own review
+13. DELETE /api/reviews — Delete own review
+14. POST /api/upload/location — Upload location photo to Vercel Blob
+15. POST /api/upload/avatar — Upload profile avatar to Vercel Blob
+16. GET  /api/profile — Get current user's profile
+17. PUT  /api/profile — Update profile (name, bio, avatar, banner color, etc.)
+18. GET  /api/profile/[id] — Get another user's public profile
+19. GET  /api/profile/scrapbook — Get user's saved/posted locations
+20. GET  /api/brackets — Get or auto-generate monthly bracket for a university
+21. POST /api/brackets/[id]/vote — Cast a vote in a bracket matchup
+22. POST /api/brackets/[id]/advance — Advance bracket to next round
+23. GET  /api/recommendations — AI-recommended places based on user history
+
+PAGES
+------
+- Home (/) — Landing page with featured locations
+- Explore (/locations) — Browse & search all locations by category/university
+- Create Post (/locations/new) — Add a new location with photo, address autocomplete
+- Location Detail (/locations/[id]) — View location, reviews, map, write reviews
+- Map (/map) — Interactive full-page map of all locations
+- Bracket (/bracket) — Monthly tournament-style voting bracket per university
+- For You (/for-you) — Personalized AI recommendations based on user activity
+- Profile (/profile) — Edit own profile (avatar, banner, bio, university)
+- Public Profile (/profile/[id]) — View another user's profile and posts
+- Sign In (/auth/signin) — Login / registration page
+
+DATABASE MODELS
+----------------
+- User (email, name, password, bio, role, university, avatarUrl, bannerColor, graduationYear)
+- Location (name, description, category, address, imageUrl, vibes, priceLevel, university, lat/lng, ratings)
+- Review (rating, body, waitMinutes, vibes, userId, locationId)
+- Bracket (university, month, year, round, finished)
+- BracketMatchup (round, position, locationA, locationB, winner)
+- BracketVote (matchupId, userId, locationId)
+
+KEY FEATURES
+-------------
+- .edu email-only registration
+- File upload OR URL paste for images (locations and avatars)
+- Address autocomplete with real addresses from OpenStreetMap
+- Interactive map with location pins
+- Star rating system (0.5–5 stars in 0.5 increments)
+- Vibe tags (Quiet, Lively, Cozy, Scenic, etc.)
+- Wait time tracking
+- Price level indicators
+- Monthly bracket voting system (auto-generated per university)
+- Personalized "For You" recommendations based on review history
+- Customizable profile banner colors
+- Edit/delete own reviews
+- Mobile-responsive design
+- Server-side rendering for SEO and performance
+
+DEVELOPMENT TOOLS
+------------------
+- ESLint (code linting)
+- ts-node (TypeScript execution for database seeding)
+- Claude Code (AI-assisted development — https://claude.com/claude-code)
+
+SOURCE CODE
+------------
+- GitHub: https://github.com/sarahy2029/put-your-anchor-down
