@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String
+  password     String
+  bio          String        @default("")
+  role         String        @default("STUDENT") // STUDENT, FACULTY, STAFF, ALUMNI, OTHER
+  university   String        @default("")
+  avatarUrl    String        @default("")
+  graduationYear Int?
+  createdAt    DateTime      @default(now())
+  reviews      Review[]
+  bracketVotes BracketVote[]
+}
+
+model Location {
+  id             String           @id @default(cuid())
+  name           String
+  description    String
+  category       String           // CAMPUS_SPOT | RESTAURANT | ATTRACTION
+  address        String
+  imageUrl       String
+  vibes          String           // JSON array stored as string
+  priceLevel     String           // FREE | DOLLAR | TWO_DOLLAR | THREE_DOLLAR
+  university     String           @default("")
+  latitude       Float?
+  longitude      Float?
+  avgWaitMinutes Float            @default(0)
+  avgRating      Float            @default(0)
+  reviewCount    Int              @default(0)
+  createdBy      String           @default("")
+  createdAt      DateTime         @default(now())
+  reviews        Review[]
+  matchupsAsA    BracketMatchup[] @relation("LocationA")
+  matchupsAsB    BracketMatchup[] @relation("LocationB")
+  matchupsWon    BracketMatchup[] @relation("MatchupWinner")
+}
+
+model Bracket {
+  id         String           @id @default(cuid())
+  university String
+  month      Int              // 1-12
+  year       Int
+  round      Int              @default(1) // current active round (1-4)
+  finished   Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  matchups   BracketMatchup[]
+
+  @@unique([university, month, year])
+}
+
+model BracketMatchup {
+  id          String        @id @default(cuid())
+  bracketId   String
+  round       Int           // 1=Round of 16, 2=Quarterfinals, 3=Semifinals, 4=Finals
+  position    Int           // position within the round (0-7 for R1, 0-3 for R2, etc.)
+  locationAId String?
+  locationBId String?
+  winnerId    String?
+  bracket     Bracket       @relation(fields: [bracketId], references: [id])
+  locationA   Location?     @relation("LocationA", fields: [locationAId], references: [id])
+  locationB   Location?     @relation("LocationB", fields: [locationBId], references: [id])
+  winner      Location?     @relation("MatchupWinner", fields: [winnerId], references: [id])
+  votes       BracketVote[]
+}
+
+model BracketVote {
+  id         String         @id @default(cuid())
+  matchupId  String
+  userId     String
+  locationId String         // which location they voted for
+  createdAt  DateTime       @default(now())
+  matchup    BracketMatchup @relation(fields: [matchupId], references: [id])
+  user       User           @relation(fields: [userId], references: [id])
+
+  @@unique([matchupId, userId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  rating      Float    // 0.5-5 in 0.5 increments
+  body        String
+  waitMinutes Int
+  vibes       String   // JSON array stored as string
+  createdAt   DateTime @default(now())
+  userId      String
+  locationId  String
+  user        User     @relation(fields: [userId], references: [id])
+  location    Location @relation(fields: [locationId], references: [id])
+}
