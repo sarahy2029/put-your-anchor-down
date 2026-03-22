@@ -28,7 +28,9 @@
       "Bash(curl -s \"https://nominatim.openstreetmap.org/search?q=UC+Berkeley+university&format=json&limit=5&type=university\" -H 'User-Agent: PutYourAnchorDown/1.0')",
       "Bash(done)",
       "Bash(sqlite3 prisma/dev.db \"SELECT r.id, u.id as userId, u.name FROM Review r JOIN User u ON r.userId = u.id LIMIT 3;\")",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ]
   }
 }

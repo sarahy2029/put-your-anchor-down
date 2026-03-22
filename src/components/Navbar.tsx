@@ -55,6 +55,14 @@ export default function Navbar() {
             >
               Map
             </Link>
+            {session && (
+              <Link
+                href="/for-you"
+                className="text-navy-700 hover:text-gold-600 transition-colors font-medium"
+              >
+                For You
+              </Link>
+            )}
           </div>
 
           {/* Desktop Auth */}
@@ -159,6 +167,15 @@ export default function Navbar() {
               >
                 Map
               </Link>
+              {session && (
+                <Link
+                  href="/for-you"
+                  className="text-navy-700 hover:text-gold-600 transition-colors font-medium px-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  For You
+                </Link>
+              )}
               <div className="pt-2 border-t border-silver-200">
                 {session ? (
                   <div className="flex flex-col gap-2 px-2">
